@@ -20,7 +20,7 @@
             xmlhttp.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
             // send the collected data as JSON
             xmlhttp.send(JSON.stringify(data));
-            var response = xmlhttp.responseText;
+            xmlhttp.onreadystatechange = OnStateChange;
 		    GetData();
         };
        
@@ -28,10 +28,7 @@
 	    var xmlhttp = new XMLHttpRequest()
 		xmlhttp.open("GET","/videos",true);
         xmlhttp.send();
-		if (xmlhttp.readyState==4 && xmlhttp.status==200){
-    		var response = xmlhttp.responseText;
-		    Display(response);
-		}
+		xmlhttp.onreadystatechange = OnStateChange;
 	 };
 		
       function Display(Data){
@@ -50,9 +47,20 @@
 	    var xmlhttp = new XMLHttpRequest()
 		xmlhttp.open("GET","/videos/"+ id,true);
         xmlhttp.send();
-		var response = xmlhttp.responseText;
-		Display(response);
+		xmlhttp.onreadystatechange = OnStateChange;
 	}
+	
+	function OnStateChange(){
+	 var xmlhttp = new XMLHttpRequest()
+     if(xmlhttp.readyState == 4) {
+        if(xmlhttp.status == 200) {
+            Data = xmlhttp.responseText;
+            Display(Data)
+        } else {
+            alert( " An error has occurred: " + xmlhttp.statusText);
+        }
+     }
+   }
 	
 	GetData();
 	 
@@ -63,7 +71,7 @@
       <h1>Interesting Music Videos</h1>
 	  <div id = "videolist">
 	  
-	  </div></br></br>
+	  </div><br></br><br></br>
 	    <form  id = "form" action="javascript:PostData()">
 	      <h3> Add a new video </h3>
 		  Video Title: <input type="text" name="title">&nbsp &nbsp
