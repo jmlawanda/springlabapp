@@ -1,0 +1,76 @@
+<html>
+  <head>
+    <title>Interesting Music Videos</title>
+	<link rel="stylesheet" type="text/css" href="static/main.css">
+	<script>
+       function PostData() {
+            var form = document.getElementById("form");
+            var data = {};
+            for (var i = 0, ii = form.length; i < ii; ++i) {
+                 var input = form[i];
+                 if (input.name) {
+                     data[input.name] = input.value;
+                 }
+            }
+            // construct an HTTP request
+            var xmlhttp = new XMLHttpRequest()
+			var method = "POST";
+			var action =  "/videos";
+			xmlhttp.open(method, action, true);
+            xmlhttp.setRequestHeader('Content-Type', 'application/json; charset=UTF-8');
+            // send the collected data as JSON
+            xmlhttp.send(JSON.stringify(data));
+            var response = xmlhttp.responseText;
+		    GetData();
+        };
+       
+      function GetData(){
+	    var xmlhttp = new XMLHttpRequest()
+		xmlhttp.open("GET","/videos",true);
+        xmlhttp.send();
+		if (xmlhttp.readyState==4 && xmlhttp.status==200){
+    		var response = xmlhttp.responseText;
+		    Display(response);
+		}
+	 };
+		
+      function Display(Data){
+	    var obj = JSON.parse(Data);
+		var htm = '';
+		for (i = 0; i < obj.length; i++) { 
+		    htm = htm + '<ul><li> <b> Video Title: &nbsp &nbsp </b>' + obj.title + '</li>';
+		    htm = htm + '<li> <b> Description: &nbsp &nbsp </b>' + obj.description + '</li>';
+		    htm = htm + '<li> <b> You Tube Video Link </b>' + obj.youtubelink + '</li>'
+			htm = htm +  '<input type="submit" value="Delete" onsubmit = DeleteData('+obj.id+')></ul>'
+			document.getElementById("videolist").innerHtml(htm);
+	    }
+	 }
+	 
+	 function DeleteData(id){
+	    var xmlhttp = new XMLHttpRequest()
+		xmlhttp.open("GET","/videos/"+ id,true);
+        xmlhttp.send();
+		var response = xmlhttp.responseText;
+		Display(response);
+	}
+	
+	GetData();
+	 
+	</script>
+		
+  </head>
+  <body>
+      <h1>Interesting Music Videos</h1>
+	  <div id = "videolist">
+	  
+	  </div></br></br>
+	    <form  id = "form" action="javascript:PostData()">
+	      <h3> Add a new video </h3>
+		  Video Title: <input type="text" name="title">&nbsp &nbsp
+		  Video Description: <input type="text" name="description">&nbsp &nbsp
+		  YouTube Link: <input type="text" name="youtubelink">&nbsp &nbsp
+		  <input type="submit" value="Submit" onsubmit = PostData()>
+        </form> 
+	  
+  </body>
+</html>
